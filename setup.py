@@ -16,14 +16,12 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'etl_utils == 0.1.1',
+        'etl_utils >= 0.1.10',
         'tfidf >= 0.0.6',
         'termcolor',
         'model_cache >=0.0.9',
         'jieba',
-
-        #'scipy',
-        #'numpy',
+        "urwid",
     ],
     classifiers=[
         'Intended Audience :: Developers',
