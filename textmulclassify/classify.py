@@ -2,12 +2,9 @@
 
 __all__ = ["TextMulClassify"]
 
-import math
 import os
-import random
-from collections import defaultdict, Counter
-from etl_utils import process_notifier, cpickle_cache, cached_property, \
-    uprint, UnicodeUtils, jieba_parse, DictUtils
+from collections import Counter
+from etl_utils import process_notifier, cpickle_cache, cached_property, uprint, jieba_parse, DictUtils
 from termcolor import cprint
 from tfidf import TfIdf
 from model_cache.tools.parallel import ParallelData
@@ -18,7 +15,7 @@ def pn(msg):
     cprint(msg, 'cyan')
 
 from .data_structures import TMCModel, TMCTree
-from .lib import ReadManualKps, FeaturesWeight, Similarity, Evaluate
+from .lib import ReadManualKps, FeaturesWeight, Evaluate
 from .engines import AssociationRuleLearningEngine, TextSimilarityEngine
 
 
@@ -92,7 +89,7 @@ class TextMulClassify(object):
     def documents_with_segments(self):
         """ 纯分词 """
         return ParallelData.process(self.model, 'dict',
-                                    self.model.pickle_path('documents_with_segments'),
+                                    cache_filename=self.model.pickle_path('documents_with_segments'),
                                     item_func=lambda item1: Counter(jieba_parse(item1.item_content)),
                                     )
 
@@ -170,7 +167,6 @@ class TextMulClassify(object):
             uprint(u"[final]", candidate_tags)
             print "\n" * 3
 
-            #import pdb; pdb.set_trace()
             candidate_tags = [{"name": name1, "ids": self.tags_tree.fetch_name_ids(name1),
                                "weight": weight1} for name1, weight1 in candidate_tags]
 
