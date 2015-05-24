@@ -10,6 +10,30 @@ TextMulClassify
 
 为给定的一段文本抽取一个或多个基于知识树的标签。
 
+Project Structure
+------------------------------------
+```txt
+textmulclassify/
+  ▾ data_structures/
+      __init__.py
+      model.py
+      tree.py
+  ▾ engines/
+      __base__.py
+      __init__.py
+      association_rule_learning.py
+      text_similarity.py
+  ▾ lib/
+      __init__.py
+      entropy.py
+      evaluate.py
+      features_weight.py
+      read_manual_kps.py
+      similarity.py
+    __init__.py
+    classify.py
+```
+
 项目细节
 ------------------------------------
 目前还没有整理出项目架构和细节，部分零碎的项目讲解见 https://github.com/17zuoye/textmulclassify/blob/master/keynote_speech.markdown
