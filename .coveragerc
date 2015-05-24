@@ -10,5 +10,4 @@ omit =
     */setup.py
 
 [run]
-parallel = True
 source   = textmulclassify

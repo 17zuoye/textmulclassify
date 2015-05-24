@@ -19,7 +19,7 @@ setup(
         'etl_utils >= 0.1.10',
         'tfidf >= 0.0.6',
         'termcolor',
-        'model_cache >=0.1.0',
+        'model_cache >=0.1.1',
         'jieba',
         "urwid",
         "bunch",
