@@ -8,6 +8,20 @@ TextMulClassify
 [![Python Versions](https://pypip.in/py_versions/textmulclassify/badge.svg?style=flat)](https://pypi.python.org/pypi/textmulclassify)
 
 
-
-
 为给定的一段文本抽取一个或多个基于知识树的标签。
+
+项目细节
+------------------------------------
+目前还没有整理出项目架构和细节，部分零碎的项目讲解见 https://github.com/17zuoye/textmulclassify/blob/master/keynote_speech.markdown
+
+
+运行测试
+------------------------------------
+```bash
+pip install tox
+tox
+```
+
+License
+------------------------------------
+MIT. David Chen @ 17zuoye
