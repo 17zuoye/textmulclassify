@@ -36,12 +36,12 @@ class Evaluate(object):
             if verbose:
                 print "\n", "#" * 50, "[process] #", idx1 + 1
             if item1['original_tags']:
-                assert isinstance(list(item1['original_tags'])[0],  unicode)
+                assert isinstance(list(item1['original_tags'])[0], unicode)
             if item1['recommend_tags']:
                 assert isinstance(list(item1['recommend_tags'])[0], unicode)
 
             original_tags  = set(filter(lambda i1: i1 in tags_tree.name_to_nodes,
-                                    item1['original_tags']))  # check valid data
+                                        item1['original_tags']))  # check valid data
             recommend_tags = set(item1['recommend_tags'])
 
             total_counts.original  += len(original_tags)
@@ -111,10 +111,10 @@ class Evaluate(object):
         print "precision_counts", repr(precision_counts)
 
         self.recall_rates = calculate_detail_rates(total_counts.original,
-                [recall_counts.exact, recall_counts.child, recall_counts.parent, recall_counts.peer, recall_counts.unmatch])
+                                                   [recall_counts.exact, recall_counts.child, recall_counts.parent, recall_counts.peer, recall_counts.unmatch])
 
         self.precision_rates = calculate_detail_rates(total_counts.recommend,
-                [precision_counts.exact, precision_counts.child, precision_counts.parent, precision_counts.peer, precision_counts.unmatch])
+                                                      [precision_counts.exact, precision_counts.child, precision_counts.parent, precision_counts.peer, precision_counts.unmatch])
 
         print "exact | child | parent | peer | unmatch | [total]"
         print "召回率", self.recall_rates

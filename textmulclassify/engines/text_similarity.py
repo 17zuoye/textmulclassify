@@ -14,8 +14,8 @@ class TextSimilarityEngine(DefaultEngine):
         self.debug = False
 
         """ 主要数据结构为 total_tag_to_features__dict , 计算item与tags之间得相似度排序。 """
-        self.total_tag_to_features__dict = cpickle_cache(self.classify.cpath('text_engine'), \
-                                                    self.cache__total_tag_to_features__dict)
+        self.total_tag_to_features__dict = cpickle_cache(self.classify.cpath('text_engine'),
+                                                         self.cache__total_tag_to_features__dict)
 
         # remove features in stop_unicode_set
         for tag1, features_dict1 in self.total_tag_to_features__dict.iteritems():
@@ -26,13 +26,13 @@ class TextSimilarityEngine(DefaultEngine):
     def call(self, item1, candidates_with_weight=[]):
         text_count1 = self.extract_features_weight(item1)
 
-        tags_to_rank = { tag1 : self.similarity(text_count1, self.total_tag_to_features__dict[tag1]) \
-                for tag1, weight1 in candidates_with_weight }
+        tags_to_rank = {tag1: self.similarity(text_count1, self.total_tag_to_features__dict[tag1])
+                        for tag1, weight1 in candidates_with_weight}
 
         return {
-                "data"    : Counter(tags_to_rank).most_common(),
-                "detail"  : {},
-               }
+            "data": Counter(tags_to_rank).most_common(),
+            "detail": {},
+        }
 
     def extract_features_weight(self, item1):
         assert isinstance(item1.item_content, unicode)
@@ -47,12 +47,14 @@ class TextSimilarityEngine(DefaultEngine):
         mix_features = segment_features + unicode_features
 
         self.filter_by_stop_list(mix_features)
-        if self.debug: uprint("[mix_features]", mix_features)
+        if self.debug:
+            uprint("[mix_features]", mix_features)
         return mix_features
 
     def filter_by_stop_list(self, d1):
         for feature1 in d1.keys():
-            if feature1 in stop_unicode_set: del d1[feature1]
+            if feature1 in stop_unicode_set:
+                del d1[feature1]
 
     def inspect_global_freq(self):
         d1 = defaultdict(int)
@@ -62,14 +64,14 @@ class TextSimilarityEngine(DefaultEngine):
         uprint(Counter(d1).most_common())
         uprint(u''.join([v1[0] for v1 in Counter(d1).most_common()]))
 
-
     def cache__total_tag_to_features__dict(self):
-        total_tag_to_features__dict = defaultdict(lambda : defaultdict(int))
+        total_tag_to_features__dict = defaultdict(lambda: defaultdict(int))
 
         # calculate model_cache's freq distribution
         test_item_ids = self.model.test_item_ids()
         for item_id1, item1 in process_notifier(self.model):
-            if item_id1 in test_item_ids: continue
+            if item_id1 in test_item_ids:
+                continue
 
             item1_features_dict = self.extract_features_weight(item1)
 
@@ -83,7 +85,6 @@ class TextSimilarityEngine(DefaultEngine):
             total_tag_to_features__dict[k1] = dict(total_tag_to_features__dict[k1])
 
         return dict(total_tag_to_features__dict)
-
 
 
 # vv = uprint([i1 for i1 in Unicode.read((os.path.dirname(os.path.dirname(self.cache_dir)) + '/junior_school_physics/dict_folder/stop_words.dict')).split("\n") if (len(i1) == 1) and Unicode.is_chinese(i1)])

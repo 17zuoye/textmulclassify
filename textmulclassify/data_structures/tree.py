@@ -8,6 +8,8 @@ from bunch import Bunch
 
 # 使用 __slots__ 属性 降低内存使用
 # 优化例子: 初高中物理数学内存从 5.6G 降低到 5.0G.
+
+
 @slots_with_pickle('current_id', 'name', 'parent_id', 'depth', 'features_weight', '_hash')
 class Node(object):
 
@@ -21,7 +23,9 @@ class Node(object):
         self._hash = hash(u"_".join([unicode(self.current_id or u""), (self.name or u"")]))
 
     """ 用来保证 每一个node都是唯一的，即使重名的。 """
-    def __hash__(self): return self._hash
+
+    def __hash__(self):
+        return self._hash
 
     def __eq__(self, another):
         assert isinstance(another, Node)
@@ -38,7 +42,7 @@ class TMCTree(dict):
         super(TMCTree, self).__init__()
 
         # 链接到核心引擎
-        self.classify = None # to set it lately
+        self.classify = None  # to set it lately
 
         # 支持Tag递归引用, node.name => [node.parent_id, ...]
         self.child_name_to_parent_relation_dict = defaultdict(set)
@@ -51,8 +55,8 @@ class TMCTree(dict):
         def import_from_list(list1):
             # 确保数据结构正确
             assert 'current_id' in list1[0]
-            assert 'parent_id'  in list1[0]
-            assert 'name'       in list1[0]
+            assert 'parent_id' in list1[0]
+            assert 'name' in list1[0]
 
             id_to_node__dict   = dict()
             for li in list1:
@@ -62,7 +66,8 @@ class TMCTree(dict):
 
             parent_to_children = defaultdict(set)
             for id1, node1 in id_to_node__dict.iteritems():
-                if (node1.current_id is None) and (node1.parent_id is None): continue
+                if (node1.current_id is None) and (node1.parent_id is None):
+                    continue
                 parent_to_children[id_to_node__dict[node1.parent_id]].add(node1)
 
                 # 用 node1.name 是兼容跨级同名
@@ -86,11 +91,12 @@ class TMCTree(dict):
 # import_from_file 暂不支持depth
             for line in UnicodeUtils.read(file1).strip().split(line_split):
                 line = line.strip()
-                if TMCTree.root_node not in self: self[TMCTree.root_node] = dict()
+                if TMCTree.root_node not in self:
+                    self[TMCTree.root_node] = dict()
                 current_dict = self[TMCTree.root_node]
                 parent_node  = TMCTree.root_node
                 for current_node in line.split(item_split):
-                    current_node = Node({"name":current_node})
+                    current_node = Node({"name": current_node})
                     self.name_to_nodes[current_node.name].add(current_node)
                     if current_node not in current_dict:
                         current_dict[current_node] = dict()
@@ -106,15 +112,15 @@ class TMCTree(dict):
         else:
             raise Exception(u"datasource 必须是 list 或者 文件名")
 
-
     def is_exact(self, recommend_node, target_node):
         """ is recommend_node exact node of target_node. """
         return recommend_node == target_node
 
     def is_peer(self, recommend_node, target_node):
         """ is recommend_node peer node of target_node. """
-        if self.is_exact(recommend_node, target_node): return False
-        return bool(self.child_name_to_parent_relation_dict[recommend_node] & \
+        if self.is_exact(recommend_node, target_node):
+            return False
+        return bool(self.child_name_to_parent_relation_dict[recommend_node] &
                     self.child_name_to_parent_relation_dict[target_node])
 
     def is_child(self, recommend_node, target_node, max_depth=1):
@@ -132,12 +138,14 @@ class TMCTree(dict):
         _depth    = 0
 
         def _is_child(child_node1, parent_node1, _depth, yes=False):
-            if child_node1.name == TMCTree.root_node.name: return False
+            if child_node1.name == TMCTree.root_node.name:
+                return False
 
             parent_nodes2 = self.child_name_to_parent_relation_dict[child_node1.name]
             # 因为推荐时用的文本，其没有current_id, 故需要对parent_nodes2进行转化
             yes = yes or (parent_node1.name in [p1.name for p1 in parent_nodes2])
-            if yes: return True
+            if yes:
+                return True
 
             traversed_nodes.add(child_node1)
 
@@ -145,9 +153,10 @@ class TMCTree(dict):
             for child_node2 in (parent_nodes2 - traversed_nodes):
                 if child_node2 is TMCTree.root_node:
                     continue
-                yes = yes or _is_child(child_node2, parent_node1, _depth+1, yes)
+                yes = yes or _is_child(child_node2, parent_node1, _depth + 1, yes)
 
-            if _depth >= max_depth: return False
+            if _depth >= max_depth:
+                return False
 
             return yes
 
@@ -161,14 +170,15 @@ class TMCTree(dict):
         return node1 in self.child_name_to_parent_relation_dict
 
     @classmethod
-    def node(cls, uname): return Node({"name":uname})
+    def node(cls, uname):
+        return Node({"name": uname})
 
     def lines(self):
         # 1. 生成一行行的从根节点到叶节点
         def extract_root_leaf_line(current_dict, parent_node, lines=[], pre_line=[]):
             pre_line = pre_line or [parent_node]
             for node1 in current_dict:
-                sub_pre_line = pre_line + [node1] # make a dup
+                sub_pre_line = pre_line + [node1]  # make a dup
                 if current_dict[node1]:
                     extract_root_leaf_line(current_dict[node1], node1, lines, sub_pre_line)
                 else:
@@ -185,10 +195,12 @@ class TMCTree(dict):
         # 2. 计算每个Node被引用次数
         def iter_nodes(lambda1):
             for line1 in lines:
-                for node1 in line1: lambda1(node1)
+                for node1 in line1:
+                    lambda1(node1)
             lambda1(self.root_node)
 
-        def assign_ref_count(node1): node1.ref_count = 0
+        def assign_ref_count(node1):
+            node1.ref_count = 0
         iter_nodes(assign_ref_count)
 
         for tags1 in tags_list:
@@ -200,8 +212,8 @@ class TMCTree(dict):
         for idx1, line1 in enumerate(lines):
             c1 = len(filter(lambda node1: node1.ref_count, line1))
             marked_nodes_counts_in_lines.append(c1)
-            print c1, "\t"*2, ', '.join(["\"%s\": %i" % (node1.name, node1.ref_count) \
-                                                for node1 in line1[1:]])
+            print c1, "\t" * 2, ', '.join(["\"%s\": %i" % (node1.name, node1.ref_count)
+                                           for node1 in line1[1:]])
         common = Counter(marked_nodes_counts_in_lines).most_common()
         print self.distribution.__doc__, common
 
@@ -217,10 +229,12 @@ class TMCTree(dict):
             for node1 in self.name_to_nodes[tag1]:
                 node1.features_weight = self.classify.calculate_features_weight(features_counter1)
 
-                for f1 in node1.features_weight.keys(): # temp Fix
-                    if f1 in self.classify.features_weight_machine.stop_words_set: del node1.features_weight[f1]
+                for f1 in node1.features_weight.keys():  # temp Fix
+                    if f1 in self.classify.features_weight_machine.stop_words_set:
+                        del node1.features_weight[f1]
 
-                for feature1 in features_counter1: self.feature_to_nodes[feature1].add(node1)
+                for feature1 in features_counter1:
+                    self.feature_to_nodes[feature1].add(node1)
         return self
 
     def inspect(self, name=None):
@@ -235,7 +249,8 @@ class TMCTree(dict):
                 for node1 in nodes_set1:
                     uprint(node1.name, Counter(node1.features_weight).most_common(), "\n")
 
-        if name is None: uprint(self)
+        if name is None:
+            uprint(self)
 
     def filter_valid_tags(self, tags):
         return list(filter(lambda t1: t1 in self.name_to_nodes, tags))
@@ -253,7 +268,7 @@ class TMCTree(dict):
                 features2 = [node_name1] + node_features
                 # 1. Add features to jieba
                 for name2 in features2:
-                    jieba.add_word(name2, 1000000) # 1000000 copied from lianhua
+                    jieba.add_word(name2, 1000000)  # 1000000 copied from lianhua
                 # 2. Add features to tags_tree.name_to_nodes
                 nodes_set2 = self.name_to_nodes.get(node_name1, set([]))
                 for node3 in nodes_set2:
@@ -264,14 +279,15 @@ class TMCTree(dict):
 
     def load__tag_to_words_count__dict(self, model_cache, documents_with_features):
         print "load item_id_to_tags__dict ..."
-        item_id_to_tags__dict = { item_id1 : self.filter_valid_tags(model_cache.tags_model__extract_tags(item1)) \
-                for item_id1, item1 in process_notifier(model_cache) }
+        item_id_to_tags__dict = {item_id1: self.filter_valid_tags(model_cache.tags_model__extract_tags(item1))
+                                 for item_id1, item1 in process_notifier(model_cache)}
 
         print "load tag_to_words_count__dict ..."
-        tag_to_words_count__dict = defaultdict(lambda : defaultdict(lambda : 0))
+        tag_to_words_count__dict = defaultdict(lambda: defaultdict(lambda: 0))
         test_item_ids = model_cache.test_item_ids()
         for item_id1, words_count1 in process_notifier(documents_with_features):
-            if item_id1 in test_item_ids: continue
+            if item_id1 in test_item_ids:
+                continue
             for tag1 in item_id_to_tags__dict[item_id1]:
                 for word1, count1 in words_count1.iteritems():
                     tag_to_words_count__dict[tag1][word1] += count1
