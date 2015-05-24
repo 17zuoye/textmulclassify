@@ -4,9 +4,8 @@
 # refactored by @mvj3
 
 import os
-import sys
 import json
-from etl_utils import process_notifier, UnicodeUtils, uprint, cached_property, singleton
+from etl_utils import UnicodeUtils, cached_property, singleton
 from collections import defaultdict, Counter
 import jieba.posseg as posseg
 
@@ -84,7 +83,7 @@ class FeaturesWeight(object):
         return set([w1.strip() for file1 in self.classify.stop_words_files
                     for w1 in UnicodeUtils.read(file1).split("\n")])
 
-    #@profile
+    # @profile
     def extract_feature_words(self, in_text):
         """ 专业词汇抽取 + 对长词(3)再做分词 """
         assert isinstance(in_text, unicode), in_text

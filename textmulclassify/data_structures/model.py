@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from etl_utils import UnicodeUtils, process_notifier, cpickle_cache
-from collections import Counter, defaultdict
+from collections import Counter
 from urwid import is_wide_char
 import random
 
@@ -51,7 +51,7 @@ class TMCModel(object):
 
     @classmethod
     def is_valid_tag(cls, tag1):
-        return self.tags_tree.has_node(tag1)
+        return cls.tags_tree.has_node(tag1)
 
     def __repr__(self):
         print "item_id", self.item_id, "\n"

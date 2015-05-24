@@ -3,8 +3,8 @@
 # original author is @junchen and @LiHeng
 # refactored by @mvj3
 
-#from scipy.spatial.distance import cosine as scipy_cosine
-#from collections import OrderedDict
+# from scipy.spatial.distance import cosine as scipy_cosine
+# from collections import OrderedDict
 from math import sqrt
 
 

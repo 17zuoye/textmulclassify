@@ -2,9 +2,8 @@
 
 from etl_utils import UnicodeUtils, process_notifier, uprint, cached_property, slots_with_pickle
 from collections import defaultdict, Counter
+from ..lib.read_manual_kps import ReadManualKps
 
-
-from bunch import Bunch
 
 # 使用 __slots__ 属性 降低内存使用
 # 优化例子: 初高中物理数学内存从 5.6G 降低到 5.0G.
@@ -88,7 +87,7 @@ class TMCTree(dict):
             add_to_current_tree(self[TMCTree.root_node], TMCTree.root_node)
 
         def import_from_file(file1):
-# import_from_file 暂不支持depth
+            # NOTE import_from_file 暂不支持depth
             for line in UnicodeUtils.read(file1).strip().split(line_split):
                 line = line.strip()
                 if TMCTree.root_node not in self:
@@ -257,11 +256,14 @@ class TMCTree(dict):
 
     @cached_property
     def total_nodes(self):
-        return set([node1 for f1, nodes in feature_to_nodes.iteritems() for node1 in nodes])
+        return set([node1 for f1, nodes in self.feature_to_nodes.iteritems() for node1 in nodes])
 
     def rich_train_data_by_editor(self, files=[]):
         """ 通过人工编辑规则增强Train Data """
         # 20140910_1427 没效果，反而有一两个百分点下降。
+        import jieba
+        dict_dir = None
+
         for file1 in files:
             parsed = ReadManualKps.process(dict_dir + file1)
             for node_name1, node_features in parsed.iteritems():

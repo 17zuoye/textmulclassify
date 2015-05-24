@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from ..data_structures.tree import TMCTree
 from etl_utils import uprint
 
 
@@ -13,6 +12,7 @@ class Evaluate(object):
             i1['eval_result'] = []
 
         # 验证数据结构
+        from ..data_structures.tree import TMCTree  # load lazily
         assert isinstance(tags_tree, TMCTree)  # name TODO
         assert isinstance(self.items, list)
         assert 'original_tags' in self.items[0]
@@ -48,8 +48,8 @@ class Evaluate(object):
             total_counts.recommend += len(recommend_tags)
 
             # processed_* 只是为了处理 epcp 依赖的顺序，即前面处理了，后面就没机会了
-            processed_original_tags   = set([])
-            processed_recommend_tags  = set([])
+            # processed_original_tags   = set([])
+            # processed_recommend_tags  = set([])
 
             def func(counts, is_precision=False):
                 if not is_precision:
